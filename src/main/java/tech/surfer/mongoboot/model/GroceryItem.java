@@ -5,7 +5,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document("groceryitems")
-@RequiredArgsConstructor
 @Getter
 @Setter
 @ToString
@@ -21,7 +20,12 @@ public class GroceryItem {
     @NonNull
     private int quantity;
 
-    @NonNull
     private String category;
 
+    public GroceryItem(@NonNull String id, @NonNull String name, @NonNull int quantity, String category) {
+        this.id = id;
+        this.name = name;
+        this.quantity = quantity;
+        this.category = category;
+    }
 }

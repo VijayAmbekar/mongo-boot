@@ -29,14 +29,45 @@ public class ItemController {
         return itemRepository.findAll();
     }
 
-    //TODO: fix this currently not working
-   /* @GetMapping("/category/{category}")
+    @GetMapping("/category/{category}")
     public List<GroceryItem> getAllItemsInCategory(@PathVariable(value = "category") String category) {
         return itemRepository.findAll(category);
-    }*/
+    }
 
     @GetMapping("/{id}")
-    public GroceryItem getAllItemById(@PathVariable(value = "id") String id) throws Exception{
+    public GroceryItem getAllItemById(@PathVariable(value = "id") String id) throws RuntimeException {
         return itemRepository.findById(id).orElseThrow(NullPointerException::new);
+    }
+
+    @GetMapping("/count")
+    public long getGroceryItemCount() {
+        return itemRepository.count();
+    }
+
+    @PutMapping("/category/{category}")
+    public long updateCategory(@PathVariable(value = "category") String category,
+                                    @RequestParam(value = "newCategory") String newCategory) {
+        log.info("newCategory {}", newCategory);
+
+        // Find all the items with the category snacks
+        List<GroceryItem> list = itemRepository.findAll(category);
+
+        list.forEach(item -> {
+            // Update the category in each document
+            item.setCategory(newCategory);
+        });
+
+        // Save all the items in database
+        List<GroceryItem> itemsUpdated = itemRepository.saveAll(list);
+
+        log.info("Successfully updated " + itemsUpdated.size() + " items.");
+
+        return itemsUpdated.size();
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteItemById(@PathVariable(value = "id") String id) {
+        itemRepository.deleteById(id);
+        log.info("Item deleted with id : {}", id);
     }
 }
